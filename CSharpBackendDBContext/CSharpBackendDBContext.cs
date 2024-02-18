@@ -97,9 +97,6 @@ namespace NZWalks.API.Data
 
             modelBuilder.Entity<BoardGames>().HasData(boardGamesToInitialiseDataset);
 
-
-
-
         }
 
     }
