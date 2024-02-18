@@ -12,6 +12,8 @@ namespace CSharpBackend.API.Models.Domain
 
         public int matchDurationInSeconds {get;set;}
 
+        public bool playerWonThisMatch {get;set;}
+
         public string chosenBoardGame {get; set;}
 
         public string chosenBoardGameGenre {get;set;}

@@ -10,7 +10,7 @@ namespace CSharpBackend.API.Models.Domain
 
         public string boardGameDescription {get; set;}
 
-        public int boardGamePrice {get; set;}
+        public float boardGamePrice {get; set;}
 
         public string boardGameBuyUrl {get;set;}
 
