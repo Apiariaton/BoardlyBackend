@@ -5,6 +5,7 @@ namespace CSharpBackend.ResearcherClasses
     public class AIGameResearcher
     {
     
+    
 
     public class AIGameResearcher(string BoardGameName)
     {
@@ -42,11 +43,20 @@ namespace CSharpBackend.ResearcherClasses
 
 
 
-    public async Task<BoardGameDto?> ResearchGame()
+    public async Task<BoardGameDto?> TryToResearchGame()
     {
-        
 
+        var openAIKey = new(Environment.GetEnvironmentVariable("OPEN_AI_KEY"));
+        var client = new OpenAIClient(openAIKey, new OpenAIClientOptions());
 
+        var chatCompletionOptions = new ChatCompletionsOptions()
+        {
+
+            DeploymentName = "",
+            Messages = { new ChatRequestUserMessage()},
+            Tools = {researchGameTool},
+
+        };
 
 
 
