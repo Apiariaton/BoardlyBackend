@@ -68,6 +68,24 @@ namespace CSharpBackend.API.Controllers
 
 
 
+        [HttpPost]
+
+        public async Create([FromBody] string boardGameName)
+        {
+
+
+            
+            
+            var boardGameCreatedFromPostRequest = await gamesRepository.CreateAsync();
+            
+
+
+
+
+        }
+
+
+
 
 
 

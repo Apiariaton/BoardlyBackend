@@ -26,6 +26,10 @@ namespace CSharpBackend.API.Repositories
             Guid boardGameId
         );
 
+        Task<BoardGame> CreateAsync(
+            BoardGame boardGame
+        );
+
 
     }
 
