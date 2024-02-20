@@ -7,7 +7,8 @@ namespace CSharpBackend.ResearcherClasses
     public class AIGameResearcher
     {
     
-    
+        
+        private readonly string deploymentName = "gpt-3.5-turbo-0125";
 
         public AIGameResearcher(string BoardGameName)
         {
@@ -73,9 +74,11 @@ namespace CSharpBackend.ResearcherClasses
         var chatCompletionOptions = new ChatCompletionsOptions()
         {
 
-            DeploymentName = "",
-            Messages = { new ChatRequestUserMessage()},
-            Tools = {researchGameTool},
+            DeploymentName = deploymentName,
+            Messages = { 
+                new ChatSystemMessage(),
+                new ChatRequestUserMessage            
+                },
 
         };
 
@@ -85,15 +88,15 @@ namespace CSharpBackend.ResearcherClasses
 
 
         }
-        catch ()//Exception produced as a result of Open AI API Connection
+        catch ()
         {
             throw new Exception("Error connecting to Open AI API");
         }
-        catch ()//Exception produced as a result of lack of Open AI API credits
+        catch ()
         {
-            throw new Exception("Error occurred to lack of Open AI API credits");
+            throw new Exception("Error occurred when attempting to use API key provided");
         }
-        catch ()//Exception produced as a result of lack of Open AI API credits
+        catch ()
         {
             throw new Exception("Error occurred to lack of Open AI API credits");
         }
@@ -106,6 +109,7 @@ namespace CSharpBackend.ResearcherClasses
         }
 
         var boardGameResearchObject = createBoardGameDto(gameResearchObject);
+        return boardGameResearchObject;
         
         
     }
