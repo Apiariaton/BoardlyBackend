@@ -1,4 +1,5 @@
 using CSharpBackend.API.Models.DataTransferObjects;
+using Azure.AI.OpenAI;
 
 namespace CSharpBackend.ResearcherClasses
 {
@@ -9,6 +10,10 @@ namespace CSharpBackend.ResearcherClasses
     
         
         private readonly string deploymentName = "gpt-3.5-turbo-0125";
+        private readonly string chatRequestSystemMessage = "";
+
+        private readonly string chatRequestUserMessage = "";
+
 
         public AIGameResearcher(string BoardGameName)
         {
@@ -19,6 +24,9 @@ namespace CSharpBackend.ResearcherClasses
             }
 
             string boardGameName = BoardGameName;
+            string deploymentName = this.deploymentName;
+            string chatRequestSystemMessage = this.chatRequestSystemMessage;
+            string chatRequestUserMessage = this.chatRequestUserMessage;
         
         }
 
@@ -36,20 +44,18 @@ namespace CSharpBackend.ResearcherClasses
             var boardGameResearchObject = await TryToResearchGame();
             return boardGameResearchObject;
         }
+        catch (ArgumentNullException argumentNullException)
+        {
+            Console.WriteLine(argumentNullException);
+            Console.WriteLine("DeploymentName, API key and Completions Options must be initialised with a correct value and may not be null...");
+        }
         catch (Exception exception)
         {
-            Console.WriteLine(exception);   
+            Console.WriteLine(exception);
+            Console.WriteLine("There was an error executing this code. Potential causes: [Lack of Internet Connection, Exhaustion of API Tokens...]");
         }
-        catch ()
-        {
-
         }
-        catch ()
-        {
-
-
-        }
-    }
+    
 
 
 
@@ -66,7 +72,7 @@ namespace CSharpBackend.ResearcherClasses
        
         if (string.IsNullOrEmpty(openAIKey))
         {
-            throw new Exception("Open AI API key is empty or undefined...");
+            throw new ArgumentNullException("Open AI API key is empty or undefined...");
         }
 
         var client = new OpenAIClient(openAIKey, new OpenAIClientOptions());
@@ -76,31 +82,15 @@ namespace CSharpBackend.ResearcherClasses
 
             DeploymentName = deploymentName,
             Messages = { 
-                new ChatSystemMessage(),
-                new ChatRequestUserMessage            
+                new ChatRequestSystemMessage(chatRequestSystemMessage),
+                new ChatRequestUserMessage(chatRequestUserMessage + boardGameName)            
                 },
 
         };
 
-        try 
-        {
-            //Connect to Open AI API and make a request
+        //Connect to OpenAI API and make request
 
-
-        }
-        catch ()
-        {
-            throw new Exception("Error connecting to Open AI API");
-        }
-        catch ()
-        {
-            throw new Exception("Error occurred when attempting to use API key provided");
-        }
-        catch ()
-        {
-            throw new Exception("Error occurred to lack of Open AI API credits");
-        }
-
+      
 
         var isRealBoardGame = gameResearchObject["boardGameExists"];
         if (!isRealBoardGame)
@@ -124,18 +114,17 @@ namespace CSharpBackend.ResearcherClasses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
+
+
+
+
+
+
+
+
+
+
 }
+
