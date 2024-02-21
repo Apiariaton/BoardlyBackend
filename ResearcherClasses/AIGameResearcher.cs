@@ -14,6 +14,8 @@ namespace CSharpBackend.ResearcherClasses
 
         private readonly string chatRequestUserMessage = "";
 
+        public readonly string boardGameName;
+
 
         public AIGameResearcher(string BoardGameName)
         {
@@ -23,11 +25,7 @@ namespace CSharpBackend.ResearcherClasses
                 throw new ArgumentNullException(nameof(BoardGameName),"BoardGameName must not be null...");
             }
 
-            string boardGameName = BoardGameName;
-            string deploymentName = this.deploymentName;
-            string chatRequestSystemMessage = this.chatRequestSystemMessage;
-            string chatRequestUserMessage = this.chatRequestUserMessage;
-        
+            boardGameName = BoardGameName;
         }
 
 
