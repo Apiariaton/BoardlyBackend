@@ -46,11 +46,13 @@ namespace CSharpBackend.ResearcherClasses
         {
             Console.WriteLine(argumentNullException);
             Console.WriteLine("DeploymentName, API key and Completions Options must be initialised with a correct value and may not be null...");
+            throw;
         }
         catch (Exception exception)
         {
             Console.WriteLine(exception);
             Console.WriteLine("There was an error executing this code. Potential causes: [Lack of Internet Connection, Exhaustion of API Tokens...]");
+            throw;
         }
         }
     
@@ -60,10 +62,10 @@ namespace CSharpBackend.ResearcherClasses
     private async Task<BoardGameDto?> TryToResearchGame()
     {
 
-        var isNewToDatabase = await checkIsNewGameToDB(boardGameName);
+        var isNewToDatabase = await CheckIsNewGameToDB(boardGameName);
         if (!isNewToDatabase)
         {
-            return new BoardGameDto();
+            return new NullBoardGameDto();
         }
 
         var openAIKey = Environment.GetEnvironmentVariable("OPEN_AI_KEY");
@@ -87,29 +89,58 @@ namespace CSharpBackend.ResearcherClasses
         };
 
         //Connect to OpenAI API and make request
+        var openAIPromptResponse = "";
 
-      
-
-        var isRealBoardGame = gameResearchObject["boardGameExists"];
-        if (!isRealBoardGame)
+        await foreach (StreamingChatCompletionsUpdate chatUpdate in client.GetChatCompletionsStreaming(chatCompletionOptions))
         {
-            return new BoardGameDto();
+
+           openAIPromptResponse += chatUpdate.ContentUpdate; 
+
         }
 
-        var boardGameResearchObject = createBoardGameDto(gameResearchObject);
-        return boardGameResearchObject;
+
+        var boardGameResearchDto = CreateBoardGameResearchDto(openAIPromptResponse);
+
+
+        var isRealBoardGame = boardGameResearchDto["boardGameExists"];
+        if (!isRealBoardGame)
+        {
+            return new NullBoardGameDto();
+        }
+
+        var boardGameDto = CreateBoardGameDto(boardGameResearchDto);
+        return boardGameDto;
         
         
     }
 
+
+    private async Task<bool> CheckIsNewGameToDB(string BoardGameName)
+    {
+        var boardGameEntry = await gameRepository.GetByName(BoardGameName);
+        if (boardGameEntry.boardGameName == "")
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    private RealBoardGameDto CreateBoardGameDto(BoardGameResearchDto boardGameResearchDto)
+    {
+        
+        var realBoardGameDto = new RealBoardGameDto()
+        {
+            boardGameId = Guid.NewGuid(),
+            boardGameDescription = boardGameResearchDto.boardGameDescription,
+            boardGamePrice = boardGameResearchDto.boardGamePrice,
+            boardGameBuyUrl = boardGameResearchDto.boardGameBuyUrl,
+            boardGameGenre = boardGameResearchDto.boardGameGenre
+        };
+
+        return realBoardGameDto;
+    }
     
-
-
-
-
-
-
-
 
 
     }

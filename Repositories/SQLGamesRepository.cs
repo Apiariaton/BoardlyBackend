@@ -33,7 +33,7 @@ namespace CSharpBackend.API.Repositories
             string? columnToSort = null,
             bool isAscending = true,
             int startPageNumber = 1,
-            int resultsPerPage = 100,
+            int resultsPerPage = 100
             )
         {
 
@@ -57,27 +57,43 @@ namespace CSharpBackend.API.Repositories
             }
 
             //Sorting
-            if (string.IsNullOrWhiteSpace(sortBy)==false)
+            if (string.IsNullOrWhiteSpace(columnToSort)==false)
             {
-                if (sortBy.Equals("boardGameName", StringComparison.OrdinalIgnoreCase))
+                if (columnToSort.Equals("boardGameName", StringComparison.OrdinalIgnoreCase))
                 {
-                    listOfWalks = isAscending ? listOfWalks.OrderBy(x => x.boardGameName) : listOfWalks.OrderByDescending(x => x.boardGameName);
+                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.boardGameName) : listOfBoardGames.OrderByDescending(x => x.boardGameName);
 
                 }
-                else if (sortBy.Equals("boardGamePrice"))
+                else if (columnToSort.Equals("boardGamePrice"))
                 {
-                    listOfWalks = isAscending ? listOfWalks.OrderBy(x => x.boardGamePrice) : listOfWalks.OrderByDescending(x => x.boardGamePrice);
+                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.boardGamePrice) : listOfBoardGames.OrderByDescending(x => x.boardGamePrice);
                 }
 
             }
 
             //Pagination
-            var numberOfBoardGamesToSkip = (startingPage - 1) * resultsPerPage;
+            var numberOfBoardGamesToSkip = (startPageNumber - 1) * resultsPerPage;
 
             return await listOfBoardGames.Skip(numberOfBoardGamesToSkip).Take(resultsPerPage).ToListAsync();
 
 
         }
+
+
+        public async Task<BoardGame?> GetByName(string BoardGameName)
+        {
+            var boardGameLocatedByName = await dbContext.BoardGames.FirstOrDefault(x => x.boardGameName == BoardGameName);
+
+            if (boardGameLocatedByName == null)
+            {
+                return {};
+
+            }
+
+            return boardGameLocatedByName; 
+
+        }
+
 
 
         public async Task<BoardGame?> UpdateAsync(Guid boardGameId, BoardGame boardGame)
@@ -115,6 +131,8 @@ namespace CSharpBackend.API.Repositories
 
             dbContext.Walks.Remove(boardGameLocatedByID);
             await dbContext.SaveChangesAsync();
+            
+            
             return boardGameLocatedByID;
 
 

@@ -14,7 +14,11 @@ namespace CSharpBackend.API.Repositories
             string? columnToSort = null,
             bool isAscending = true,
             int startPageNumber = 1,
-            int resultsPerPage = 100,
+            int resultsPerPage = 100
+        );
+
+        Task<List<BoardGame>> GetByName(
+            string BoardGameName
         );
 
         Task<BoardGame?> UpdateAsync(
