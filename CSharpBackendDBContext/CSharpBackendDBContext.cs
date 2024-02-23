@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore.;
+using Microsoft.EntityFrameworkCore;
 using CSharpBackend.API.Models.Domain;
 
 namespace NZWalks.API.Data 

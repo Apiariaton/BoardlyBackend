@@ -17,7 +17,7 @@ namespace CSharpBackend.API.Repositories
             int resultsPerPage = 100
         );
 
-        Task<List<BoardGame>> GetByName(
+        Task<BoardGame> GetByName(
             string BoardGameName
         );
 

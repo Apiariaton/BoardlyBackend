@@ -17,6 +17,7 @@ namespace CSharpBackend.API.Controllers
     {
 
         private readonly CSharpBackendDbContext dbContext;
+        private readonly IGamesRepository gamesRepository;
 
         public GamesController(CSharpBackendDbContext dbContext, IGamesRepository gamesRepository)
         {
@@ -29,28 +30,28 @@ namespace CSharpBackend.API.Controllers
         public async Task<IActionResult> GetAll(
         [FromQuery]   string? columnToFilter, 
         [FromQuery]   string? rowToMatch,
-        [FromQuery]   string? columnToSort
-        [FromQuery]   bool? isAscending,
+        [FromQuery]   string? columnToSort,
+        [FromQuery]   bool isAscending,
         [FromQuery]   int startPageNumber = 1,
-        [FromQuery]   int resultsPerPage = 100,
+        [FromQuery]   int resultsPerPage = 100
         )
         {
 
             var boardGamesList = await gamesRepository.GetAllAsync(
                 columnToFilter, 
                 rowToMatch,
-                columnToSort
+                columnToSort,
                 isAscending,
                 startPageNumber,
-                resultsPerPage,
+                resultsPerPage
             );
 
             var boardGamesDtoList = new List<BoardGameDto>();
 
-            foreach (boardGame in boardGamesList)
+            foreach (BoardGame boardGame in boardGamesList)
             {
-                boardGamesDto.Add(
-                    new BoardGameDto()
+                boardGamesDtoList.Add(
+                    new RealBoardGameDto()
                     {
                         boardGameId = boardGame.boardGameId,
                         boardGameName = boardGame.boardGameName,
@@ -70,18 +71,23 @@ namespace CSharpBackend.API.Controllers
 
         [HttpPost]
 
-        public async Create([FromBody] string boardGameName)
+        public async Task<IActionResult> Create([FromBody] string boardGameName)
         {
 
 
+        
+            var boardGameCreatedFromPostRequest = await gamesRepository.CreateAsync(boardGameName);
             
-            
-            var boardGameCreatedFromPostRequest = await gamesRepository.CreateAsync();
-            
-
-
-
-
+            if (boardGameCreatedFromPostRequest is RealBoardGameDto)
+            {
+                return Ok(boardGameCreatedFromPostRequest);
+            }
+            else
+            {
+                return BadRequest(boardGameCreatedFromPostRequest);
+            }
+        
+        
         }
 
 

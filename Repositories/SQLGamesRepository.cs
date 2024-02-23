@@ -27,6 +27,7 @@ namespace CSharpBackend.API.Repositories
 
         }
 
+
         public async Task<List<BoardGame>> GetAllAsync(
             string? columnToFilter = null, 
             string? rowToMatch = null,
@@ -86,7 +87,7 @@ namespace CSharpBackend.API.Repositories
 
             if (boardGameLocatedByName == null)
             {
-                return {};
+                return null;
 
             }
 
@@ -103,7 +104,7 @@ namespace CSharpBackend.API.Repositories
 
             if (boardGameLocatedByID == null)
             {
-                return {};
+                return null;
             }
 
             boardGameLocatedByID.boardGameName = boardGame.boardGameName;
@@ -126,7 +127,7 @@ namespace CSharpBackend.API.Repositories
 
             if (boardGameLocatedByID == null)
             {
-                return {};
+                return null;
             }
 
             dbContext.Walks.Remove(boardGameLocatedByID);
