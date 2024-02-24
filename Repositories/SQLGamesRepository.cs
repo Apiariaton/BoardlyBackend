@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using CSharpBackend.API.Data;
 using CSharpBackend.API.Models.Domain;
+using CSharpBackend.API.Models.DataTransferObjects;
 
 namespace CSharpBackend.API.Repositories
 {
@@ -18,8 +19,16 @@ namespace CSharpBackend.API.Repositories
         }
 
 
-        public async Task<BoardGame> CreateAsync(BoardGame boardGame)
+        public async Task<BoardGame> CreateAsync(RealBoardGameDto boardGameDto)
         {
+            var boardGame = new BoardGame
+            {
+                BoardGameId = boardGameDto.boardGameId,
+                BoardGameName = 
+                BoardGameBuyUrl = boardGameDto.boardGameBuyUrl,
+
+
+            };
 
             await dbContext.BoardGames.AddAsync(boardGame);
             await dbContext.SaveChangesAsync();
@@ -45,15 +54,15 @@ namespace CSharpBackend.API.Repositories
             {
                 if (columnToFilter.Equals("boardGameName"))
                 {
-                    listOfBoardGames = listOfBoardGames.Where(x => x.boardGameName.Contains(rowToMatch));
+                    listOfBoardGames = listOfBoardGames.Where(x => x.BoardGameName.Contains(rowToMatch));
                 }
                 else if (columnToFilter.Equals("boardGameGenre"))
                 {
-                    listOfBoardGames = listOfBoardGames.Where(x=> x.boardGameGenre.Equals(rowToMatch));
+                    listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGameGenre.Equals(rowToMatch));
                 }
                 else if (columnToFilter.Equals("boardGamePrice"))
                 {
-                    listOfBoardGames = listOfBoardGames.Where(x=> x.boardGamePrice <= rowToMatch);
+                    listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGamePrice <= float.Parse(rowToMatch));
                 }
             }
 
@@ -62,12 +71,12 @@ namespace CSharpBackend.API.Repositories
             {
                 if (columnToSort.Equals("boardGameName", StringComparison.OrdinalIgnoreCase))
                 {
-                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.boardGameName) : listOfBoardGames.OrderByDescending(x => x.boardGameName);
+                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGameName) : listOfBoardGames.OrderByDescending(x => x.BoardGameName);
 
                 }
                 else if (columnToSort.Equals("boardGamePrice"))
                 {
-                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.boardGamePrice) : listOfBoardGames.OrderByDescending(x => x.boardGamePrice);
+                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGamePrice) : listOfBoardGames.OrderByDescending(x => x.BoardGamePrice);
                 }
 
             }
@@ -81,9 +90,9 @@ namespace CSharpBackend.API.Repositories
         }
 
 
-        public async Task<BoardGame?> GetByName(string BoardGameName)
+        public async Task<BoardGame?> GetByName(string boardGameName)
         {
-            var boardGameLocatedByName = await dbContext.BoardGames.FirstOrDefault(x => x.boardGameName == BoardGameName);
+            var boardGameLocatedByName = await dbContext.BoardGames.FirstOrDefaultAsync(x => x.BoardGameName == boardGameName);
 
             if (boardGameLocatedByName == null)
             {
@@ -100,18 +109,18 @@ namespace CSharpBackend.API.Repositories
         public async Task<BoardGame?> UpdateAsync(Guid boardGameId, BoardGame boardGame)
         {
 
-            var boardGameLocatedByID = await dbContext.BoardGames.FirstOrDefault(x => x.boardGameId == boardGameId);
+            var boardGameLocatedByID = await dbContext.BoardGames.FirstOrDefaultAsync(x => x.BoardGameId == boardGameId);
 
             if (boardGameLocatedByID == null)
             {
                 return null;
             }
 
-            boardGameLocatedByID.boardGameName = boardGame.boardGameName;
-            boardGameLocatedByID.boardGameDescription = boardGame.boardGameDescription;
-            boardGameLocatedByID.boardGamePrice = boardGame.boardGamePrice;
-            boardGameLocatedByID.boardGameBuyUrl = boardGame.boardGameBuyUrl;
-            boardGameLocatedByID.boardGameGenre = boardGame.boardGameGenre;
+            boardGameLocatedByID.BoardGameName = boardGame.BoardGameName;
+            boardGameLocatedByID.BoardGameDescription = boardGame.BoardGameDescription;
+            boardGameLocatedByID.BoardGamePrice = boardGame.BoardGamePrice;
+            boardGameLocatedByID.BoardGameBuyUrl = boardGame.BoardGameBuyUrl;
+            boardGameLocatedByID.BoardGameGenre = boardGame.BoardGameGenre;
 
             dbContext.SaveChangesAsync();
             return boardGameLocatedByID;
@@ -123,14 +132,14 @@ namespace CSharpBackend.API.Repositories
         {
 
 
-            var boardGameLocatedByID = await dbContext.BoardGames.FirstOrDefault(x => x.boardGameId == boardGameId);
+            var boardGameLocatedByID = await dbContext.BoardGames.FirstOrDefaultAsync(x => x.BoardGameId == boardGameId);
 
             if (boardGameLocatedByID == null)
             {
                 return null;
             }
 
-            dbContext.Walks.Remove(boardGameLocatedByID);
+            dbContext.BoardGames.Remove(boardGameLocatedByID);
             await dbContext.SaveChangesAsync();
             
             

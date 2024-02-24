@@ -16,10 +16,10 @@ namespace CSharpBackend.API.Controllers
     public class GamesController : ControllerBase
     {
 
-        private readonly CSharpBackendDbContext dbContext;
+        private readonly CSharpBackendDBContext dbContext;
         private readonly IGamesRepository gamesRepository;
 
-        public GamesController(CSharpBackendDbContext dbContext, IGamesRepository gamesRepository)
+        public GamesController(CSharpBackendDBContext dbContext, IGamesRepository gamesRepository)
         {
             this.dbContext = dbContext;
             this.gamesRepository = gamesRepository;
@@ -53,12 +53,12 @@ namespace CSharpBackend.API.Controllers
                 boardGamesDtoList.Add(
                     new RealBoardGameDto()
                     {
-                        boardGameId = boardGame.boardGameId,
-                        boardGameName = boardGame.boardGameName,
-                        boardGameDescription = boardGame.boardGameDescription,
-                        boardGamePrice = boardGame.boardGamePrice,
-                        boardGameBuyUrl = boardGame.boardGameBuyUrl,
-                        boardGameGenre = boardGame.boardGameGenre
+                        boardGameId = boardGame.BoardGameId,
+                        boardGameName = boardGame.BoardGameName,
+                        boardGameDescription = boardGame.BoardGameDescription,
+                        boardGamePrice = boardGame.BoardGamePrice,
+                        boardGameBuyUrl = boardGame.BoardGameBuyUrl,
+                        boardGameGenre = boardGame.BoardGameGenre
                     }
                 );
             };
@@ -71,12 +71,12 @@ namespace CSharpBackend.API.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> Create([FromBody] string boardGameName)
+        public async Task<IActionResult> Create([FromBody] RealBoardGameDto boardGameDto)
         {
 
 
         
-            var boardGameCreatedFromPostRequest = await gamesRepository.CreateAsync(boardGameName);
+            var boardGameCreatedFromPostRequest = await gamesRepository.CreateAsync(boardGameDto);
             
             if (boardGameCreatedFromPostRequest is RealBoardGameDto)
             {

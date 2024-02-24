@@ -1,3 +1,4 @@
+using CSharpBackend.API.Models.DataTransferObjects;
 using CSharpBackend.API.Models.Domain;
 
 namespace CSharpBackend.API.Repositories
@@ -31,7 +32,7 @@ namespace CSharpBackend.API.Repositories
         );
 
         Task<BoardGame> CreateAsync(
-            BoardGame boardGame
+            RealBoardGameDto boardGame
         );
 
 

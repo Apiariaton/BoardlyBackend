@@ -4,17 +4,17 @@ namespace CSharpBackend.API.Models.Domain
     public class BoardGame
     {
 
-        public Guid boardGameId {get;set;}
+        public Guid BoardGameId {get;set;}
 
-        public string boardGameName { get; set;}
+        public string BoardGameName { get; set;}
 
-        public string boardGameDescription {get; set;}
+        public string BoardGameDescription {get; set;}
 
-        public float boardGamePrice {get; set;}
+        public float BoardGamePrice {get; set;}
 
-        public string boardGameBuyUrl {get;set;}
+        public string BoardGameBuyUrl {get;set;}
 
-        public string boardGameGenre {get;set;}
+        public string BoardGameGenre {get;set;}
 
 
     }
