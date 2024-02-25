@@ -24,9 +24,11 @@ namespace CSharpBackend.API.Repositories
             var boardGame = new BoardGame
             {
                 BoardGameId = boardGameDto.boardGameId,
-                BoardGameName = 
+                BoardGameName = boardGameDto.boardGameName,
                 BoardGameBuyUrl = boardGameDto.boardGameBuyUrl,
-
+                BoardGameDescription = boardGameDto.boardGameDescription,
+                BoardGamePrice = boardGameDto.boardGamePrice,
+                BoardGameGenre = boardGameDto.boardGameGenre
 
             };
 
@@ -122,7 +124,7 @@ namespace CSharpBackend.API.Repositories
             boardGameLocatedByID.BoardGameBuyUrl = boardGame.BoardGameBuyUrl;
             boardGameLocatedByID.BoardGameGenre = boardGame.BoardGameGenre;
 
-            dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
             return boardGameLocatedByID;
 
         }

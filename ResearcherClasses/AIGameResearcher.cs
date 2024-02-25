@@ -1,5 +1,7 @@
 using CSharpBackend.API.Models.DataTransferObjects;
 using Azure.AI.OpenAI;
+using CSharpBackend.API.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSharpBackend.ResearcherClasses
 {
@@ -14,6 +16,9 @@ namespace CSharpBackend.ResearcherClasses
 
         private readonly string chatRequestUserMessage = "";
 
+        private readonly IGamesRepository gamesRepository;
+
+
         public readonly string boardGameName;
 
 
@@ -26,6 +31,7 @@ namespace CSharpBackend.ResearcherClasses
             }
 
             boardGameName = BoardGameName;
+
         }
 
 
@@ -98,17 +104,19 @@ namespace CSharpBackend.ResearcherClasses
 
         }
 
+        Console.Write(openAIPromptResponse);
+        // var boardGameResearchDto = CreateBoardGameResearchDto(openAIPromptResponse);
 
-        var boardGameResearchDto = CreateBoardGameResearchDto(openAIPromptResponse);
 
+        // var isRealBoardGame = boardGameResearchDto["boardGameExists"];
+        // if (!isRealBoardGame)
+        // {
+        //     return new NullBoardGameDto();
+        // }
 
-        var isRealBoardGame = boardGameResearchDto["boardGameExists"];
-        if (!isRealBoardGame)
-        {
-            return new NullBoardGameDto();
-        }
-
-        var boardGameDto = CreateBoardGameDto(boardGameResearchDto);
+        // var boardGameDto = CreateBoardGameDto(boardGameResearchDto);
+        
+        var boardGameDto = new RealBoardGameDto();
         return boardGameDto;
         
         
@@ -117,8 +125,8 @@ namespace CSharpBackend.ResearcherClasses
 
     private async Task<bool> CheckIsNewGameToDB(string BoardGameName)
     {
-        var boardGameEntry = await gameRepository.GetByName(BoardGameName);
-        if (boardGameEntry.boardGameName == "")
+        var boardGameEntry = await gamesRepository.GetByName(BoardGameName);
+        if (boardGameEntry.BoardGameName == "")
         {
             return true;
         }
