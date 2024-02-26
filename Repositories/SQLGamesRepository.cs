@@ -48,45 +48,46 @@ namespace CSharpBackend.API.Repositories
             int resultsPerPage = 100
             )
         {
+            return await dbContext.BoardGames.ToListAsync();
 
-            var listOfBoardGames = dbContext.BoardGames.Include("boardGameName").Include("boardGameGenre").Include("boardGamePrice").AsQueryable();
+            // var listOfBoardGames = dbContext.BoardGames.Include("boardGameName").Include("boardGameGenre").Include("boardGamePrice").AsQueryable();
             
-            //Filter by columnToFilter and rowToMatch
-            if (string.IsNullOrWhiteSpace(columnToFilter) == false && string.IsNullOrWhiteSpace(rowToMatch) == false)
-            {
-                if (columnToFilter.Equals("boardGameName"))
-                {
-                    listOfBoardGames = listOfBoardGames.Where(x => x.BoardGameName.Contains(rowToMatch));
-                }
-                else if (columnToFilter.Equals("boardGameGenre"))
-                {
-                    listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGameGenre.Equals(rowToMatch));
-                }
-                else if (columnToFilter.Equals("boardGamePrice"))
-                {
-                    listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGamePrice <= float.Parse(rowToMatch));
-                }
-            }
+            // //Filter by columnToFilter and rowToMatch
+            // if (string.IsNullOrWhiteSpace(columnToFilter) == false && string.IsNullOrWhiteSpace(rowToMatch) == false)
+            // {
+            //     if (columnToFilter.Equals("boardGameName"))
+            //     {
+            //         listOfBoardGames = listOfBoardGames.Where(x => x.BoardGameName.Contains(rowToMatch));
+            //     }
+            //     else if (columnToFilter.Equals("boardGameGenre"))
+            //     {
+            //         listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGameGenre.Equals(rowToMatch));
+            //     }
+            //     else if (columnToFilter.Equals("boardGamePrice"))
+            //     {
+            //         listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGamePrice <= float.Parse(rowToMatch));
+            //     }
+            // }
 
-            //Sorting
-            if (string.IsNullOrWhiteSpace(columnToSort)==false)
-            {
-                if (columnToSort.Equals("boardGameName", StringComparison.OrdinalIgnoreCase))
-                {
-                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGameName) : listOfBoardGames.OrderByDescending(x => x.BoardGameName);
+            // //Sorting
+            // if (string.IsNullOrWhiteSpace(columnToSort)==false)
+            // {
+            //     if (columnToSort.Equals("boardGameName", StringComparison.OrdinalIgnoreCase))
+            //     {
+            //         listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGameName) : listOfBoardGames.OrderByDescending(x => x.BoardGameName);
 
-                }
-                else if (columnToSort.Equals("boardGamePrice"))
-                {
-                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGamePrice) : listOfBoardGames.OrderByDescending(x => x.BoardGamePrice);
-                }
+            //     }
+            //     else if (columnToSort.Equals("boardGamePrice"))
+            //     {
+            //         listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGamePrice) : listOfBoardGames.OrderByDescending(x => x.BoardGamePrice);
+            //     }
 
-            }
+            // }
 
-            //Pagination
-            var numberOfBoardGamesToSkip = (startPageNumber - 1) * resultsPerPage;
+            // //Pagination
+            // var numberOfBoardGamesToSkip = (startPageNumber - 1) * resultsPerPage;
 
-            return await listOfBoardGames.Skip(numberOfBoardGamesToSkip).Take(resultsPerPage).ToListAsync();
+            // return await listOfBoardGames.Skip(numberOfBoardGamesToSkip).Take(resultsPerPage).ToListAsync();
 
 
         }

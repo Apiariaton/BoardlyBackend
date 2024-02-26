@@ -48,8 +48,11 @@ namespace CSharpBackend.API.Controllers
 
             var boardGamesDtoList = new List<BoardGameDto>();
 
+
             foreach (BoardGame boardGame in boardGamesList)
             {
+                Console.WriteLine(boardGame.BoardGameName);
+
                 boardGamesDtoList.Add(
                     new RealBoardGameDto()
                     {
