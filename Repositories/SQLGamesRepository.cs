@@ -19,19 +19,9 @@ namespace CSharpBackend.API.Repositories
         }
 
 
-        public async Task<BoardGame> CreateAsync(RealBoardGameDto boardGameDto)
+        public async Task<BoardGame> CreateAsync(BoardGame boardGame)
         {
-            var boardGame = new BoardGame
-            {
-                BoardGameId = boardGameDto.boardGameId,
-                BoardGameName = boardGameDto.boardGameName,
-                BoardGameBuyUrl = boardGameDto.boardGameBuyUrl,
-                BoardGameDescription = boardGameDto.boardGameDescription,
-                BoardGamePrice = boardGameDto.boardGamePrice,
-                BoardGameGenre = boardGameDto.boardGameGenre
-
-            };
-
+  
             await dbContext.BoardGames.AddAsync(boardGame);
             await dbContext.SaveChangesAsync();
             return boardGame;
@@ -48,52 +38,52 @@ namespace CSharpBackend.API.Repositories
             int resultsPerPage = 100
             )
         {
-            return await dbContext.BoardGames.ToListAsync();
+        
 
-            // var listOfBoardGames = dbContext.BoardGames.Include("boardGameName").Include("boardGameGenre").Include("boardGamePrice").AsQueryable();
+            var listOfBoardGames = dbContext.BoardGames.AsQueryable();
             
-            // //Filter by columnToFilter and rowToMatch
-            // if (string.IsNullOrWhiteSpace(columnToFilter) == false && string.IsNullOrWhiteSpace(rowToMatch) == false)
-            // {
-            //     if (columnToFilter.Equals("boardGameName"))
-            //     {
-            //         listOfBoardGames = listOfBoardGames.Where(x => x.BoardGameName.Contains(rowToMatch));
-            //     }
-            //     else if (columnToFilter.Equals("boardGameGenre"))
-            //     {
-            //         listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGameGenre.Equals(rowToMatch));
-            //     }
-            //     else if (columnToFilter.Equals("boardGamePrice"))
-            //     {
-            //         listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGamePrice <= float.Parse(rowToMatch));
-            //     }
-            // }
+            //Filter by columnToFilter and rowToMatch
+            if (string.IsNullOrWhiteSpace(columnToFilter) == false && string.IsNullOrWhiteSpace(rowToMatch) == false)
+            {
+                if (columnToFilter.Equals("boardGameName"))
+                {
+                    listOfBoardGames = listOfBoardGames.Where(x => x.BoardGameName.Contains(rowToMatch));
+                }
+                else if (columnToFilter.Equals("boardGameGenre"))
+                {
+                    listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGameGenre.Equals(rowToMatch));
+                }
+                else if (columnToFilter.Equals("boardGamePrice"))
+                {
+                    listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGamePrice <= float.Parse(rowToMatch));
+                }
+            }
 
-            // //Sorting
-            // if (string.IsNullOrWhiteSpace(columnToSort)==false)
-            // {
-            //     if (columnToSort.Equals("boardGameName", StringComparison.OrdinalIgnoreCase))
-            //     {
-            //         listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGameName) : listOfBoardGames.OrderByDescending(x => x.BoardGameName);
+            //Sorting
+            if (string.IsNullOrWhiteSpace(columnToSort)==false)
+            {
+                if (columnToSort.Equals("boardGameName", StringComparison.OrdinalIgnoreCase))
+                {
+                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGameName) : listOfBoardGames.OrderByDescending(x => x.BoardGameName);
 
-            //     }
-            //     else if (columnToSort.Equals("boardGamePrice"))
-            //     {
-            //         listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGamePrice) : listOfBoardGames.OrderByDescending(x => x.BoardGamePrice);
-            //     }
+                }
+                else if (columnToSort.Equals("boardGamePrice"))
+                {
+                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGamePrice) : listOfBoardGames.OrderByDescending(x => x.BoardGamePrice);
+                }
 
-            // }
+            }
 
-            // //Pagination
-            // var numberOfBoardGamesToSkip = (startPageNumber - 1) * resultsPerPage;
+            //Pagination
+            var numberOfBoardGamesToSkip = (startPageNumber - 1) * resultsPerPage;
 
-            // return await listOfBoardGames.Skip(numberOfBoardGamesToSkip).Take(resultsPerPage).ToListAsync();
+            return await listOfBoardGames.Skip(numberOfBoardGamesToSkip).Take(resultsPerPage).ToListAsync();
 
 
         }
 
 
-        public async Task<BoardGame?> GetByName(string boardGameName)
+        public async Task<BoardGame?> GetByNameAsync(string boardGameName)
         {
             var boardGameLocatedByName = await dbContext.BoardGames.FirstOrDefaultAsync(x => x.BoardGameName == boardGameName);
 

@@ -4,8 +4,6 @@ using CSharpBackend.API.Models.Domain;
 namespace CSharpBackend.API.Repositories
 {
 
-
-
     public interface IGamesRepository
     {
 
@@ -18,7 +16,7 @@ namespace CSharpBackend.API.Repositories
             int resultsPerPage = 100
         );
 
-        Task<BoardGame?> GetByName(
+        Task<BoardGame?> GetByNameAsync(
             string BoardGameName
         );
 
@@ -32,7 +30,7 @@ namespace CSharpBackend.API.Repositories
         );
 
         Task<BoardGame> CreateAsync(
-            RealBoardGameDto boardGame
+            BoardGame boardGame
         );
 
 

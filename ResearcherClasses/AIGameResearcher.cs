@@ -125,7 +125,7 @@ namespace CSharpBackend.ResearcherClasses
 
     private async Task<bool> CheckIsNewGameToDB(string BoardGameName)
     {
-        var boardGameEntry = await gamesRepository.GetByName(BoardGameName);
+        var boardGameEntry = await gamesRepository.GetByNameAsync(BoardGameName);
         if (boardGameEntry.BoardGameName == "")
         {
             return true;

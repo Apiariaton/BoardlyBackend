@@ -27,16 +27,18 @@ namespace CSharpBackend.API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(
+        public async Task<IActionResult> GetAllAsync(
         [FromQuery]   string? columnToFilter, 
         [FromQuery]   string? rowToMatch,
         [FromQuery]   string? columnToSort,
-        [FromQuery]   bool isAscending,
+        [FromQuery]   bool isAscending = true,
         [FromQuery]   int startPageNumber = 1,
         [FromQuery]   int resultsPerPage = 100
         )
         {
 
+            try
+            {
             var boardGamesList = await gamesRepository.GetAllAsync(
                 columnToFilter, 
                 rowToMatch,
@@ -46,7 +48,7 @@ namespace CSharpBackend.API.Controllers
                 resultsPerPage
             );
 
-            var boardGamesDtoList = new List<BoardGameDto>();
+            var boardGamesDtoList = new List<RealBoardGameDto>();
 
 
             foreach (BoardGame boardGame in boardGamesList)
@@ -65,8 +67,14 @@ namespace CSharpBackend.API.Controllers
                     }
                 );
             };
+                return Ok(boardGamesDtoList);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                return BadRequest();
+            }
 
-            return Ok(boardGamesDtoList);
 
         }
 
@@ -74,12 +82,20 @@ namespace CSharpBackend.API.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> Create([FromBody] RealBoardGameDto boardGameDto)
+        public async Task<IActionResult> CreateAsync([FromBody] RealBoardGameDto boardGameDto)
         {
 
+            var boardGame = new BoardGame()
+            {
+                BoardGameId = boardGameDto.boardGameId,
+                BoardGameName = boardGameDto.boardGameName,
+                BoardGameDescription = boardGameDto.boardGameDescription,
+                BoardGamePrice = boardGameDto.boardGamePrice,
+                BoardGameBuyUrl = boardGameDto.boardGameBuyUrl,
+                BoardGameGenre = boardGameDto.boardGameGenre
+            };
 
-        
-            var boardGameCreatedFromPostRequest = await gamesRepository.CreateAsync(boardGameDto);
+            var boardGameCreatedFromPostRequest = await gamesRepository.CreateAsync(boardGame);
             
             if (boardGameCreatedFromPostRequest is RealBoardGameDto)
             {
