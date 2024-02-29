@@ -5,6 +5,7 @@ using CSharpBackend.API.Data;
 using CSharpBackend.API.Models.Domain;
 using CSharpBackend.API.Models.DataTransferObjects;
 using CSharpBackend.API.Repositories;
+using CSharpBackend.API.ResearcherClasses;
 
 
 namespace CSharpBackend.API.Controllers
@@ -53,7 +54,6 @@ namespace CSharpBackend.API.Controllers
 
             foreach (BoardGame boardGame in boardGamesList)
             {
-                Console.WriteLine(boardGame.BoardGameName);
 
                 boardGamesDtoList.Add(
                     new RealBoardGameDto()
@@ -84,6 +84,9 @@ namespace CSharpBackend.API.Controllers
 
         public async Task<IActionResult> CreateAsync([FromBody] RealBoardGameDto boardGameDto)
         {
+            var aiGameResearcher = new AIGameResearcher("Fungi");
+
+            var boardGameResearchObject = await aiGameResearcher.GetBoardGameResearchObj();
 
             var boardGame = new BoardGame()
             {

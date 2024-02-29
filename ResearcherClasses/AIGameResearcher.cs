@@ -3,7 +3,7 @@ using Azure.AI.OpenAI;
 using CSharpBackend.API.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace CSharpBackend.ResearcherClasses
+namespace CSharpBackend.API.ResearcherClasses
 {
 
 
@@ -125,12 +125,27 @@ namespace CSharpBackend.ResearcherClasses
 
     private async Task<bool> CheckIsNewGameToDB(string BoardGameName)
     {
-        var boardGameEntry = await gamesRepository.GetByNameAsync(BoardGameName);
-        if (boardGameEntry.BoardGameName == "")
+        try
         {
+            var boardGameEntry = await gamesRepository.GetByNameAsync(BoardGameName);
+            if (boardGameEntry == null)
+            {
+                return true;
+            }
             return true;
         }
-        return false;
+        catch (System.NullReferenceException)
+        {
+            Console.WriteLine("It is not currently possible to interact with Games Repository...");
+            throw;
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine(exception);
+            throw;
+        }
+
+    
     }
 
 

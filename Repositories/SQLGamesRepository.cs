@@ -89,7 +89,7 @@ namespace CSharpBackend.API.Repositories
 
             if (boardGameLocatedByName == null)
             {
-                return null;
+                return new BoardGame();
 
             }
 
