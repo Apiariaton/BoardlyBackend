@@ -22,15 +22,16 @@ namespace CSharpBackend.API.ResearcherClasses
         public readonly string boardGameName;
 
 
-        public AIGameResearcher(string BoardGameName)
+        public AIGameResearcher(string boardGameName, IGamesRepository gamesRepository)
         {
 
-            if (string.IsNullOrWhiteSpace(BoardGameName))
+            if (string.IsNullOrWhiteSpace(boardGameName))
             {
-                throw new ArgumentNullException(nameof(BoardGameName),"BoardGameName must not be null...");
+                throw new ArgumentNullException(nameof(boardGameName),"BoardGameName must not be null...");
             }
 
-            boardGameName = BoardGameName;
+            this.boardGameName = boardGameName;
+            this.gamesRepository = gamesRepository;
 
         }
 
@@ -74,14 +75,21 @@ namespace CSharpBackend.API.ResearcherClasses
             return new NullBoardGameDto();
         }
 
-        var openAIKey = Environment.GetEnvironmentVariable("OPEN_AI_KEY");
+        var openAIKey = Environment.GetEnvironmentVariable("OPEN_AI_KEY",EnvironmentVariableTarget.User);
        
         if (string.IsNullOrEmpty(openAIKey))
         {
             throw new ArgumentNullException("Open AI API key is empty or undefined...");
         }
 
+
         var client = new OpenAIClient(openAIKey, new OpenAIClientOptions());
+
+        if (string.IsNullOrEmpty(chatRequestSystemMessage) || string.IsNullOrEmpty(chatRequestUserMessage))
+        {
+            throw new ArgumentNullException("chatRequestSystemMessage and chatRequestUserMessage must both be defined...");
+        }
+
 
         var chatCompletionOptions = new ChatCompletionsOptions()
         {
@@ -128,11 +136,11 @@ namespace CSharpBackend.API.ResearcherClasses
         try
         {
             var boardGameEntry = await gamesRepository.GetByNameAsync(BoardGameName);
-            if (boardGameEntry == null)
+            if (boardGameEntry.BoardGameName == null)
             {
                 return true;
             }
-            return true;
+            return false;
         }
         catch (System.NullReferenceException)
         {

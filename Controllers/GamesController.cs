@@ -84,7 +84,7 @@ namespace CSharpBackend.API.Controllers
 
         public async Task<IActionResult> CreateAsync([FromBody] RealBoardGameDto boardGameDto)
         {
-            var aiGameResearcher = new AIGameResearcher("Fungi");
+            var aiGameResearcher = new AIGameResearcher("Fungi",gamesRepository);
 
             var boardGameResearchObject = await aiGameResearcher.GetBoardGameResearchObj();
 
