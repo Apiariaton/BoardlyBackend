@@ -1,8 +1,5 @@
 {
-    "ModelSettings":
-    {
-        "DeploymentName":"gpt-3.5-turbo-0125"
-    },
-    "SystemMessage": "",
-    "UserMessage": ""
+    "deploymentName":"gpt-3.5-turbo-0125",
+    "chatRequestSystemMessage": "You must answer with a JSON object where the keys are as follows: boardGameExists and the answer is true or false; BoardGameName and the answer is the standardised camel case title; BoardGameDescription and the answer is a 10 word description of the board game; BoardGameGenre and the answer is a one word to summarise the board game's genre. Please provide entertaining board game descriptions and specific genres.",
+    "chatRequestUserMessage": "Does a board game exist with the name? "
 }

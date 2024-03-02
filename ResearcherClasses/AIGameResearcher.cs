@@ -2,6 +2,7 @@ using CSharpBackend.API.Models.DataTransferObjects;
 using Azure.AI.OpenAI;
 using CSharpBackend.API.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace CSharpBackend.API.ResearcherClasses
 {
@@ -11,10 +12,10 @@ namespace CSharpBackend.API.ResearcherClasses
     {
     
         
-        private readonly string deploymentName = "gpt-3.5-turbo-0125";
-        private readonly string chatRequestSystemMessage = "";
+        private readonly string deploymentName;
+        private readonly string chatRequestSystemMessage;
 
-        private readonly string chatRequestUserMessage = "";
+        private readonly string chatRequestUserMessage;
 
         private readonly IGamesRepository gamesRepository;
 
@@ -32,6 +33,16 @@ namespace CSharpBackend.API.ResearcherClasses
 
             this.boardGameName = boardGameName;
             this.gamesRepository = gamesRepository;
+
+
+            string JSONSettingsContent = File.ReadAllText(@"ResearcherClasses\aisearchsettings.json");
+            AISearchSettings aiSearchSettings = JsonSerializer.Deserialize<AISearchSettings>(JSONSettingsContent);             
+
+        
+            deploymentName = aiSearchSettings.deploymentName;
+            chatRequestSystemMessage = aiSearchSettings.chatRequestSystemMessage;
+            chatRequestUserMessage = aiSearchSettings.chatRequestUserMessage;
+
 
         }
 
@@ -58,7 +69,7 @@ namespace CSharpBackend.API.ResearcherClasses
         catch (Exception exception)
         {
             Console.WriteLine(exception);
-            Console.WriteLine("There was an error executing this code. Potential causes: [Lack of Internet Connection, Exhaustion of API Tokens...]");
+            Console.WriteLine("There was an error executing this code. Potential causes: [Lack of Internet Connection, Exhaustion of API credit...]");
             throw;
         }
         }
@@ -85,7 +96,11 @@ namespace CSharpBackend.API.ResearcherClasses
 
         var client = new OpenAIClient(openAIKey, new OpenAIClientOptions());
 
-        if (string.IsNullOrEmpty(chatRequestSystemMessage) || string.IsNullOrEmpty(chatRequestUserMessage))
+        if (
+            string.IsNullOrEmpty(deploymentName)
+        ||  string.IsNullOrEmpty(chatRequestSystemMessage) 
+        ||  string.IsNullOrEmpty(chatRequestUserMessage)
+        )
         {
             throw new ArgumentNullException("chatRequestSystemMessage and chatRequestUserMessage must both be defined...");
         }
