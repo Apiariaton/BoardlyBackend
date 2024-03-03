@@ -82,31 +82,32 @@ namespace CSharpBackend.API.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> CreateAsync([FromBody] RealBoardGameDto boardGameDto)
+        public async Task<IActionResult> CreateAsync([FromBody] string newBoardGameName)
         {
-            var aiGameResearcher = new AIGameResearcher("Fungi",gamesRepository);
+            var aiGameResearcher = new AIGameResearcher(newBoardGameName,gamesRepository);
 
             var boardGameResearchObject = await aiGameResearcher.GetBoardGameResearchObj();
-
-            var boardGame = new BoardGame()
+                        
+            if (boardGameResearchObject is RealBoardGameDto)
             {
-                BoardGameId = boardGameDto.boardGameId,
-                BoardGameName = boardGameDto.boardGameName,
-                BoardGameDescription = boardGameDto.boardGameDescription,
-                BoardGamePrice = boardGameDto.boardGamePrice,
-                BoardGameBuyUrl = boardGameDto.boardGameBuyUrl,
-                BoardGameGenre = boardGameDto.boardGameGenre
-            };
 
-            var boardGameCreatedFromPostRequest = await gamesRepository.CreateAsync(boardGame);
-            
-            if (boardGameCreatedFromPostRequest is RealBoardGameDto)
-            {
-                return Ok(boardGameCreatedFromPostRequest);
+                var boardGame = new BoardGame()
+                {
+                    BoardGameId = boardGameResearchObject.boardGameId,
+                    BoardGameName = boardGameResearchObject.boardGameName,
+                    BoardGameDescription = boardGameResearchObject.boardGameDescription,
+                    BoardGamePrice = boardGameResearchObject.boardGamePrice,
+                    BoardGameBuyUrl = boardGameResearchObject.boardGameBuyUrl,
+                    BoardGameGenre = boardGameResearchObject.boardGameGenre
+                };
+                
+                var boardGameAddedToDatabase = await gamesRepository.CreateAsync(boardGame);
+
+                return Ok(boardGameAddedToDatabase);
             }
             else
             {
-                return BadRequest(boardGameCreatedFromPostRequest);
+                return BadRequest("No board game exists with this name or this boardgame has already been added to database");
             }
         
         

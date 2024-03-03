@@ -53,6 +53,7 @@ namespace CSharpBackend.API.ResearcherClasses
             return boardGameResearchObject;
     }
 
+
     private async Task<BoardGameDto?> ResearchGame()
     {
         try 
@@ -128,18 +129,8 @@ namespace CSharpBackend.API.ResearcherClasses
         }
 
         Console.Write(openAIPromptResponse);
-        // var boardGameResearchDto = CreateBoardGameResearchDto(openAIPromptResponse);
-
-
-        // var isRealBoardGame = boardGameResearchDto["boardGameExists"];
-        // if (!isRealBoardGame)
-        // {
-        //     return new NullBoardGameDto();
-        // }
-
-        // var boardGameDto = CreateBoardGameDto(boardGameResearchDto);
         
-        var boardGameDto = new RealBoardGameDto();
+        var boardGameDto = ConvertStringToBoardGameDto(openAIPromptResponse);
         return boardGameDto;
         
         
@@ -172,19 +163,33 @@ namespace CSharpBackend.API.ResearcherClasses
     }
 
 
-    private RealBoardGameDto CreateBoardGameDto(BoardGameResearchDto boardGameResearchDto)
+    private BoardGameDto ConvertStringToBoardGameDto(string BoardGameJSONString)
     {
-        
-        var realBoardGameDto = new RealBoardGameDto()
-        {
-            boardGameId = Guid.NewGuid(),
-            boardGameDescription = boardGameResearchDto.boardGameDescription,
-            boardGamePrice = boardGameResearchDto.boardGamePrice,
-            boardGameBuyUrl = boardGameResearchDto.boardGameBuyUrl,
-            boardGameGenre = boardGameResearchDto.boardGameGenre
-        };
 
-        return realBoardGameDto;
+        var boardGameResearchDto = JsonSerializer.Deserialize<BoardGameResearchDto>(BoardGameJSONString);
+
+        if (boardGameResearchDto.boardGameExists)
+        {
+
+            var realBoardGameDto = new RealBoardGameDto()
+            {
+                boardGameId = Guid.NewGuid(),
+                boardGameName = boardGameResearchDto.boardGameName,
+                boardGameDescription = boardGameResearchDto.boardGameDescription,
+                boardGamePrice = 0.00F,
+                boardGameBuyUrl = "",
+                boardGameGenre = boardGameResearchDto.boardGameGenre
+            };
+
+            return realBoardGameDto;
+        }
+        else
+        {
+            return new NullBoardGameDto();
+        }
+
+
+
     }
     
 

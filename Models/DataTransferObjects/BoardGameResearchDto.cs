@@ -11,10 +11,6 @@ namespace CSharpBackend.API.Models.DataTransferObjects
 
         public string boardGameDescription {get; set;}
 
-        public float boardGamePrice {get; set;}
-
-        public string boardGameBuyUrl {get;set;}
-
         public string boardGameGenre {get;set;}
 
 
