@@ -22,6 +22,10 @@ namespace CSharpBackend.API.ResearcherClasses
 
         public readonly string boardGameName;
 
+        private readonly string priceResearchURL = "https://www.google.com/search?q={0}+board+game"; 
+
+
+
 
         public AIGameResearcher(string boardGameName, IGamesRepository gamesRepository)
         {
@@ -162,7 +166,6 @@ namespace CSharpBackend.API.ResearcherClasses
     
     }
 
-
     private BoardGameDto ConvertStringToBoardGameDto(string BoardGameJSONString)
     {
 
@@ -176,8 +179,7 @@ namespace CSharpBackend.API.ResearcherClasses
                 boardGameId = Guid.NewGuid(),
                 boardGameName = boardGameResearchDto.boardGameName,
                 boardGameDescription = boardGameResearchDto.boardGameDescription,
-                boardGamePrice = 0.00F,
-                boardGameBuyUrl = "",
+                boardGameBuyUrl = CreateBoardGameSearchURL(boardGameResearchDto.boardGameName),
                 boardGameGenre = boardGameResearchDto.boardGameGenre
             };
 
@@ -188,8 +190,12 @@ namespace CSharpBackend.API.ResearcherClasses
             return new NullBoardGameDto();
         }
 
+    }
 
 
+    private string CreateBoardGameSearchURL(string boardGameName)
+    {
+        return string.Format(priceResearchURL,boardGameName); 
     }
     
 

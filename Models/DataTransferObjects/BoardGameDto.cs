@@ -10,8 +10,6 @@ namespace CSharpBackend.API.Models.DataTransferObjects
 
         public virtual string boardGameDescription {get; set;}
 
-        public virtual float boardGamePrice {get; set;}
-
         public virtual string boardGameBuyUrl {get;set;}
 
         public virtual string boardGameGenre {get;set;}
@@ -25,8 +23,6 @@ namespace CSharpBackend.API.Models.DataTransferObjects
         public override string boardGameName { get; set;}
 
         public override string boardGameDescription {get; set;}
-
-        public override float boardGamePrice {get; set;}
 
         public override string boardGameBuyUrl {get;set;}
 
@@ -44,8 +40,6 @@ namespace CSharpBackend.API.Models.DataTransferObjects
         }
 
         public override string boardGameDescription {get; set;}
-
-        public override float boardGamePrice {get; set;}
 
         public override string boardGameBuyUrl {get;set;}
 

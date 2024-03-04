@@ -53,10 +53,6 @@ namespace CSharpBackend.API.Repositories
                 {
                     listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGameGenre.Equals(rowToMatch));
                 }
-                else if (columnToFilter.Equals("boardGamePrice"))
-                {
-                    listOfBoardGames = listOfBoardGames.Where(x=> x.BoardGamePrice <= float.Parse(rowToMatch));
-                }
             }
 
             //Sorting
@@ -66,10 +62,6 @@ namespace CSharpBackend.API.Repositories
                 {
                     listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGameName) : listOfBoardGames.OrderByDescending(x => x.BoardGameName);
 
-                }
-                else if (columnToSort.Equals("boardGamePrice"))
-                {
-                    listOfBoardGames = isAscending ? listOfBoardGames.OrderBy(x => x.BoardGamePrice) : listOfBoardGames.OrderByDescending(x => x.BoardGamePrice);
                 }
 
             }
@@ -111,7 +103,6 @@ namespace CSharpBackend.API.Repositories
 
             boardGameLocatedByID.BoardGameName = boardGame.BoardGameName;
             boardGameLocatedByID.BoardGameDescription = boardGame.BoardGameDescription;
-            boardGameLocatedByID.BoardGamePrice = boardGame.BoardGamePrice;
             boardGameLocatedByID.BoardGameBuyUrl = boardGame.BoardGameBuyUrl;
             boardGameLocatedByID.BoardGameGenre = boardGame.BoardGameGenre;
 

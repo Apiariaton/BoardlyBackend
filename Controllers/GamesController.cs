@@ -61,7 +61,6 @@ namespace CSharpBackend.API.Controllers
                         boardGameId = boardGame.BoardGameId,
                         boardGameName = boardGame.BoardGameName,
                         boardGameDescription = boardGame.BoardGameDescription,
-                        boardGamePrice = boardGame.BoardGamePrice,
                         boardGameBuyUrl = boardGame.BoardGameBuyUrl,
                         boardGameGenre = boardGame.BoardGameGenre
                     }
@@ -96,7 +95,6 @@ namespace CSharpBackend.API.Controllers
                     BoardGameId = boardGameResearchObject.boardGameId,
                     BoardGameName = boardGameResearchObject.boardGameName,
                     BoardGameDescription = boardGameResearchObject.boardGameDescription,
-                    BoardGamePrice = boardGameResearchObject.boardGamePrice,
                     BoardGameBuyUrl = boardGameResearchObject.boardGameBuyUrl,
                     BoardGameGenre = boardGameResearchObject.boardGameGenre
                 };

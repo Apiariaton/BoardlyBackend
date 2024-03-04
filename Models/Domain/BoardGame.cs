@@ -10,8 +10,6 @@ namespace CSharpBackend.API.Models.Domain
 
         public string BoardGameDescription {get; set;}
 
-        public float BoardGamePrice {get; set;}
-
         public string BoardGameBuyUrl {get;set;}
 
         public string BoardGameGenre {get;set;}
