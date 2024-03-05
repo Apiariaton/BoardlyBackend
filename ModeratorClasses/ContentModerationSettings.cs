@@ -6,9 +6,9 @@ namespace CSharpBackend.API.ModeratorClasses
 
         public float MaxToxicityScore {get;set;}
 
-        public string LanguageCode {get;set;}
+        public string[] LanguageCodes {get;set;}
 
-
+        public string BaseAddress {get;set;}
     }
 
 
