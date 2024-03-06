@@ -4,7 +4,7 @@ namespace CSharpBackend.API.ModeratorClasses
     public class ContentModerationSettings
     {
 
-        public float MaxToxicityScore {get;set;}
+        public string MaxToxicityScore {get;set;}
 
         public string[] LanguageCodes {get;set;}
 

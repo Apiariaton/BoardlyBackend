@@ -6,6 +6,7 @@ using CSharpBackend.API.Models.Domain;
 using CSharpBackend.API.Models.DataTransferObjects;
 using CSharpBackend.API.Repositories;
 using CSharpBackend.API.ResearcherClasses;
+using CSharpBackend.API.ModeratorClasses;
 
 
 namespace CSharpBackend.API.Controllers
@@ -83,30 +84,36 @@ namespace CSharpBackend.API.Controllers
 
         public async Task<IActionResult> CreateAsync([FromBody] string newBoardGameName)
         {
-            var aiGameResearcher = new AIGameResearcher(newBoardGameName,gamesRepository);
+            
+            var contentModerator = new ContentModerator(newBoardGameName);
+            var outputString = contentModerator.GetModeratedString();
+            
+            return Ok(outputString); 
 
-            var boardGameResearchObject = await aiGameResearcher.GetBoardGameResearchObj();
+            // var aiGameResearcher = new AIGameResearcher(newBoardGameName,gamesRepository);
+
+            // var boardGameResearchObject = await aiGameResearcher.GetBoardGameResearchObj();
                         
-            if (boardGameResearchObject is RealBoardGameDto)
-            {
+            // if (boardGameResearchObject is RealBoardGameDto)
+            // {
 
-                var boardGame = new BoardGame()
-                {
-                    BoardGameId = boardGameResearchObject.boardGameId,
-                    BoardGameName = boardGameResearchObject.boardGameName,
-                    BoardGameDescription = boardGameResearchObject.boardGameDescription,
-                    BoardGameBuyUrl = boardGameResearchObject.boardGameBuyUrl,
-                    BoardGameGenre = boardGameResearchObject.boardGameGenre
-                };
+            //     var boardGame = new BoardGame()
+            //     {
+            //         BoardGameId = boardGameResearchObject.boardGameId,
+            //         BoardGameName = boardGameResearchObject.boardGameName,
+            //         BoardGameDescription = boardGameResearchObject.boardGameDescription,
+            //         BoardGameBuyUrl = boardGameResearchObject.boardGameBuyUrl,
+            //         BoardGameGenre = boardGameResearchObject.boardGameGenre
+            //     };
                 
-                var boardGameAddedToDatabase = await gamesRepository.CreateAsync(boardGame);
+            //     var boardGameAddedToDatabase = await gamesRepository.CreateAsync(boardGame);
 
-                return Ok(boardGameAddedToDatabase);
-            }
-            else
-            {
-                return BadRequest("No board game exists with this name or this boardgame has already been added to database");
-            }
+            //     return Ok(boardGameAddedToDatabase);
+            // }
+            // else
+            // {
+            //     return BadRequest("No board game exists with this name or this boardgame has already been added to database");
+            // }
         
         
         }

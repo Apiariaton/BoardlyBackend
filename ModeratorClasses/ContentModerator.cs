@@ -15,7 +15,7 @@ namespace CSharpBackend.API.ModeratorClasses
 
         private HttpClient httpClient;
 
-        private readonly float MaxToxicityScore;
+        private readonly int MaxToxicityScore;
 
         private readonly string[] LanguageCodes;
 
@@ -23,21 +23,19 @@ namespace CSharpBackend.API.ModeratorClasses
         {
             this.inputString = HttpUtility.HtmlEncode(inputString);
             this.httpClient = new HttpClient();
-            
-            this.httpClient.DefaultRequestHeaders.Add("Content-Type","application/json");
-            
-
+                        
             try
             {
             string JSONSettingsContent = File.ReadAllText(@"ModeratorClasses\contentmoderationsettings.json");
             var moderatorSettings = JsonSerializer.Deserialize<ContentModerationSettings>(JSONSettingsContent);
             
-            MaxToxicityScore = moderatorSettings.MaxToxicityScore;
+            MaxToxicityScore = int.Parse(moderatorSettings.MaxToxicityScore);
             LanguageCodes = moderatorSettings.LanguageCodes;
 
 
-            var perspectiveAPIKey = Environment.GetEnvironmentVariable("PERSPECTIVE_API_Key",EnvironmentVariableTarget.User);                
+            var perspectiveAPIKey = Environment.GetEnvironmentVariable("PERSPECTIVE_API_KEY",EnvironmentVariableTarget.User);                
             this.httpClient.BaseAddress = new Uri(moderatorSettings.BaseAddress + "?key=" + perspectiveAPIKey);
+            
             }
             catch (DirectoryNotFoundException)
             {
@@ -64,14 +62,13 @@ namespace CSharpBackend.API.ModeratorClasses
                 var moderatedString = await TryToGetModeratedString();
                 return moderatedString;
             }
-            catch () {
-
-            
+            catch (NotSupportedException) {
+                throw;
             }
-            catch ()
+            catch (Exception)
             {
-
-
+                Console.WriteLine("An issue occurred - causes may include: internet connection, incorrect API or URL");
+                throw;
             }
         }
 
@@ -81,9 +78,11 @@ namespace CSharpBackend.API.ModeratorClasses
 
             var moderationContent = CreateHttpContentForHttpClient();
 
-            var contentModeratorResponse = await httpClient.PostAsync(moderationContent);
+            var contentModeratorResponse = await httpClient.PostAsync(this.httpClient.BaseAddress,moderationContent);
             
+            Console.WriteLine(contentModeratorResponse.ToString());
 
+            return contentModeratorResponse.ToString();
 
         }
 
