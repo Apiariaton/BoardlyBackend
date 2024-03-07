@@ -80,9 +80,22 @@ namespace CSharpBackend.API.ModeratorClasses
 
             var contentModeratorResponse = await httpClient.PostAsync(this.httpClient.BaseAddress,moderationContent);
             
+            var contentModeratorResponseString= await contentModeratorResponse.Content.ReadAsStringAsync();
+
+            JsonSerializerOptions JsonSerializerDefaultOptions = new(JsonSerializerDefaults.Web);
+            
+            var contentModeratorResponseBody = JsonSerializer.Deserialize<ContentModerationResponse>(contentModeratorResponseString,JsonSerializerDefaultOptions);
+
+            var contentToxicityScore = contentModeratorResponseBody.attributeScores.summaryScore.value;
+
+            if (contentToxicityScore > MaxToxicityScore)
+            {
+                return "Input string was considered too toxic to output"; 
+            }
+            
             Console.WriteLine(contentModeratorResponse.ToString());
 
-            return contentModeratorResponse.ToString();
+            return inputString;
 
         }
 
