@@ -86,7 +86,7 @@ namespace CSharpBackend.API.Controllers
         {
             
             var contentModerator = new ContentModerator(newBoardGameName);
-            var outputString = contentModerator.GetModeratedString();
+            string outputString = await contentModerator.GetModeratedString();
             
             return Ok(outputString); 
 

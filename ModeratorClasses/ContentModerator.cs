@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.IO;
 using System.Text;
+using Newtonsoft.Json;
 
 
 namespace CSharpBackend.API.ModeratorClasses
@@ -27,7 +28,7 @@ namespace CSharpBackend.API.ModeratorClasses
             try
             {
             string JSONSettingsContent = File.ReadAllText(@"ModeratorClasses\contentmoderationsettings.json");
-            var moderatorSettings = JsonSerializer.Deserialize<ContentModerationSettings>(JSONSettingsContent);
+            var moderatorSettings = JsonConvert.DeserializeObject<ContentModerationSettings>(JSONSettingsContent);
             
             MaxToxicityScore = int.Parse(moderatorSettings.MaxToxicityScore);
             LanguageCodes = moderatorSettings.LanguageCodes;
@@ -71,46 +72,31 @@ namespace CSharpBackend.API.ModeratorClasses
                 throw;
             }
         }
-
-
         private async Task<string> TryToGetModeratedString()
         {
 
-            var moderationContent = CreateHttpContentForHttpClient();
+            HttpContent moderationContent = CreateRequestHttpContent();
+            HttpResponseMessage contentModeratorResponse = await SendContentToModeratorAPI(moderationContent);
+            ContentModerationResponse contentModerationResponseBody = await DeserializeContentModeratorResponse(contentModeratorResponse);
+        
+            double contentToxicityScore = GetContentToxicityScore(contentModerationResponseBody);
+            string moderatedInputString = GetModerationResult(contentToxicityScore);
 
-            var contentModeratorResponse = await httpClient.PostAsync(this.httpClient.BaseAddress,moderationContent);
-            
-            var contentModeratorResponseString= await contentModeratorResponse.Content.ReadAsStringAsync();
-
-            JsonSerializerOptions JsonSerializerDefaultOptions = new(JsonSerializerDefaults.Web);
-            
-            var contentModeratorResponseBody = JsonSerializer.Deserialize<ContentModerationResponse>(contentModeratorResponseString,JsonSerializerDefaultOptions);
-
-            var contentToxicityScore = contentModeratorResponseBody.attributeScores.summaryScore.value;
-
-            if (contentToxicityScore > MaxToxicityScore)
-            {
-                return "Input string was considered too toxic to output"; 
-            }
-            
-            Console.WriteLine(contentModeratorResponse.ToString());
-
-            return inputString;
+            return moderatedInputString;
 
         }
 
 
 
 
-
-        private HttpContent CreateHttpContentForHttpClient()
+        private HttpContent CreateRequestHttpContent()
         {
 
             try 
             {
-                var JSONRequestString = CreateRawJSONRequestString();
-                HttpContent HttpRequestContent = TurnRawJSONToHttpContent(JSONRequestString);
-                return HttpRequestContent;
+                var requestAsJSONString = CreateRequestJSONString();
+                HttpContent RequestAsHttpContent = CreateRequestHttpContent(requestAsJSONString);
+                return RequestAsHttpContent;
             }
             catch (NotSupportedException)
             {
@@ -120,8 +106,40 @@ namespace CSharpBackend.API.ModeratorClasses
             }
         }
 
+        private async Task<HttpResponseMessage> SendContentToModeratorAPI(HttpContent moderationContent)
+        {
+            var contentModeratorResponse = await httpClient.PostAsync(this.httpClient.BaseAddress,moderationContent);
+            contentModeratorResponse.EnsureSuccessStatusCode();
+            return contentModeratorResponse;
+        }
 
-        private string CreateRawJSONRequestString()
+
+        private async Task<ContentModerationResponse> DeserializeContentModeratorResponse(HttpResponseMessage contentModeratorResponse)
+        {
+            string contentModeratorResponseString = await contentModeratorResponse.Content.ReadAsStringAsync();
+            
+            ContentModerationResponse contentModerationResponseBody = JsonConvert.DeserializeObject<ContentModerationResponse>(contentModeratorResponseString);
+
+            return contentModerationResponseBody;
+        }
+
+
+        private double GetContentToxicityScore(ContentModerationResponse contentModerationResponseBody)
+        {
+            return contentModerationResponseBody.attributeScores.Toxicity.summaryScore.value;
+        }
+
+        private string GetModerationResult(double contentToxicityScore)
+        {
+            return contentToxicityScore > MaxToxicityScore ? "Input string was considered too toxic to output" :  inputString;
+        }
+
+        
+
+
+
+
+        private string CreateRequestJSONString()
         {
 
             var contentModeratorRequest = new ContentModeratorRequest
@@ -131,19 +149,27 @@ namespace CSharpBackend.API.ModeratorClasses
                 requestedAttributes = new RequestedAttributes { TOXICITY = new object() }
             };
 
-            string rawJSONRequestString = JsonSerializer.Serialize(contentModeratorRequest);
+            string rawJSONRequestString = JsonConvert.SerializeObject(contentModeratorRequest);
 
             return rawJSONRequestString;
 
         }
 
-
-        private HttpContent TurnRawJSONToHttpContent(string rawJSONRequestString)
+        private HttpContent CreateRequestHttpContent(string rawJSONRequestString)
         {
 
             return new StringContent(rawJSONRequestString,Encoding.UTF8,"application/json");
 
         }
+
+
+  
+
+
+
+
+
+  
     
 
 
