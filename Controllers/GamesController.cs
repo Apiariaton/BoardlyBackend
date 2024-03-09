@@ -88,32 +88,35 @@ namespace CSharpBackend.API.Controllers
             var contentModerator = new ContentModerator(newBoardGameName);
             string outputString = await contentModerator.GetModeratedString();
             
-            return Ok(outputString); 
+            if (outputString == "Input string was considered too toxic to output")
+            {
+                return BadRequest("Search string was considered too inflammatory to process...");
+            } 
 
-            // var aiGameResearcher = new AIGameResearcher(newBoardGameName,gamesRepository);
+            var aiGameResearcher = new AIGameResearcher(outputString,gamesRepository);
 
-            // var boardGameResearchObject = await aiGameResearcher.GetBoardGameResearchObj();
+            var boardGameResearchObject = await aiGameResearcher.GetBoardGameResearchObj();
                         
-            // if (boardGameResearchObject is RealBoardGameDto)
-            // {
+            if (boardGameResearchObject is RealBoardGameDto)
+            {
 
-            //     var boardGame = new BoardGame()
-            //     {
-            //         BoardGameId = boardGameResearchObject.boardGameId,
-            //         BoardGameName = boardGameResearchObject.boardGameName,
-            //         BoardGameDescription = boardGameResearchObject.boardGameDescription,
-            //         BoardGameBuyUrl = boardGameResearchObject.boardGameBuyUrl,
-            //         BoardGameGenre = boardGameResearchObject.boardGameGenre
-            //     };
+                var boardGame = new BoardGame()
+                {
+                    BoardGameId = boardGameResearchObject.boardGameId,
+                    BoardGameName = boardGameResearchObject.boardGameName,
+                    BoardGameDescription = boardGameResearchObject.boardGameDescription,
+                    BoardGameBuyUrl = boardGameResearchObject.boardGameBuyUrl,
+                    BoardGameGenre = boardGameResearchObject.boardGameGenre
+                };
                 
-            //     var boardGameAddedToDatabase = await gamesRepository.CreateAsync(boardGame);
+                var boardGameAddedToDatabase = await gamesRepository.CreateAsync(boardGame);
 
-            //     return Ok(boardGameAddedToDatabase);
-            // }
-            // else
-            // {
-            //     return BadRequest("No board game exists with this name or this boardgame has already been added to database");
-            // }
+                return Ok(boardGameAddedToDatabase);
+            }
+            else
+            {
+                return BadRequest("No board game exists with this name or this boardgame has already been added to database");
+            }
         
         
         }
