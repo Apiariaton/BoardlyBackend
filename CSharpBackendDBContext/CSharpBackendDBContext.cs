@@ -19,7 +19,7 @@ namespace CSharpBackend.API.Data
         public DbSet<BoardGame> BoardGames {get;set;}
 
 
-        public DbSet<Match> Matches {get;set;}
+        public DbSet<PlayerVsPlayerDuel> PlayerVsPlayerDuels {get;set;}
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
